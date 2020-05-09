@@ -2,6 +2,7 @@ const gulp = require('gulp')
 const gulpInject = require('gulp-inject')
 const gulpSass = require('gulp-sass')
 const gulpPostcss = require('gulp-postcss')
+const gulpCssnano = require('gulp-cssnano')
 const gulpBabel = require('gulp-babel')
 const gulpUglify = require('gulp-uglify')
 const gulpRename = require('gulp-rename')
@@ -41,6 +42,20 @@ function css() {
 }
 exports.css = css
 
+function cssnano () {
+    return gulp
+        .src(['dist/css/*.css', '!dist/css/*.min.css'])
+        .pipe(
+            gulpRename({
+                suffix: '.min',
+                extname: '.css',
+            })
+        )
+        .pipe(gulpCssnano())
+        .pipe(gulp.dest('dist/css'))
+}
+exports.cssnano = cssnano
+
 function js() {
     return gulp
         .src(['src/js/**/*.js'])
@@ -53,6 +68,20 @@ function js() {
         .pipe(reload({ stream: true }))
 }
 exports.js = js
+
+function compressJs() {
+    return gulp
+        .src(['dist/**/*.js', '!dist/**/*.min.js'])
+        .pipe(
+            gulpRename({
+                suffix: '.min',
+                extname: '.js',
+            })
+        )
+        .pipe(gulpUglify())
+        .pipe(gulp.dest('dist'))
+}
+exports.compressJs = compressJs
 
 function html() {
     return gulp
@@ -110,22 +139,9 @@ function clean () {
 }
 exports.clean = clean
 
-function compress() {
-    return gulp
-        .src(['dist/**/*.js', '!dist/**/*.min.js'])
-        .pipe(
-            gulpRename({
-                suffix: '.min',
-                extname: '.js',
-            })
-        )
-        .pipe(gulpUglify())
-        .pipe(gulp.dest('dist'))
-}
-exports.compress = compress
 
 // 并发执行 js，css
 exports.serve = gulp.series(gulp.parallel(js, css), html, watchs)
 
 // 并发执行 js，css
-exports.build = gulp.series(clean, gulp.parallel(js, css), compress, html)
+exports.build = gulp.series(clean, gulp.parallel(js, css), gulp.parallel(compressJs, cssnano), html)
