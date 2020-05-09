@@ -1,3 +1,4 @@
+const fs = require('fs')
 const gulp = require('gulp')
 const gulpInject = require('gulp-inject')
 const gulpSass = require('gulp-sass')
@@ -7,11 +8,13 @@ const gulpBabel = require('gulp-babel')
 const gulpUglify = require('gulp-uglify')
 const gulpRename = require('gulp-rename')
 const gulpClean = require('gulp-clean')
+const gulpCopy = require('gulp-copy')
 const gulpSourcemaps = require('gulp-sourcemaps')
 const browserSync = require('browser-sync').create()
 const reload = browserSync.reload
 const gulpIconfont = require('gulp-iconfont')
-const runTimestamp = Math.round(Date.now() / 1000)
+const gulpIconfontCss = require('gulp-iconfont-css')
+const gulpTemplate = require('gulp-template')
 
 gulpSass.compiler = require('node-sass')
 
@@ -42,7 +45,7 @@ function css() {
 }
 exports.css = css
 
-function cssnano () {
+function cssnano() {
     return gulp
         .src(['dist/css/*.css', '!dist/css/*.min.css'])
         .pipe(
@@ -102,11 +105,22 @@ function html() {
 }
 exports.html = html
 
+function copyStatic() {
+    return gulp
+        .src(['static/**/*.*'])
+        .pipe(gulpCopy('dist/'))
+        .pipe(gulp.dest('dist'))
+        .pipe(reload({ stream: true }))
+}
+exports.copyStatic = copyStatic
+
 const watchs = () => {
-    watch('src/**/*.js', js)
-    watch('src/**/*.scss', css)
-    watch('src/index.html', html)
-    //watch(['src/images/*.*', 'src/images/*/*.*'], images)
+    gulp.watch('src/**/*.js', js)
+    gulp.watch('src/**/*.scss', css)
+    gulp.watch('src/index.html', html)
+    gulp.watch('src/icons/svg/*.svg', svgFont)
+    gulp.watch('src/icons/example/index.html', makeExample)
+    //gulp.watch(['src/images/*.*', 'src/images/*/*.*'], images)
     browserSync.init({
         server: {
             baseDir: 'dist/',
@@ -115,15 +129,42 @@ const watchs = () => {
 }
 exports.watchs = watchs
 
-function makeIconfont() {
+function getIcons() {
+    var icons = fs.readdirSync('src/icons/svg')
+    icons = icons.map(function (icon) {
+        return icon.replace('.svg', '')
+    })
+    return icons
+}
+
+function makeExample() {
     return gulp
-        .src(['src/svg/*.svg'])
+        .src('src/icons/example/index.html')
+        .pipe(
+            gulpTemplate({
+                icons: getIcons(),
+            })
+        )
+        .pipe(gulp.dest('dist/fonts/'))
+        .pipe(reload({ stream: true }))
+}
+
+function svgFont() {
+    return gulp
+        .src(['src/icons/svg/**/*.svg'])
+        .pipe(
+            gulpIconfontCss({
+                fontName: 'iconfont',
+                path: 'src/icons/template/iconfont.css',
+                targetPath: '../css/iconfont.css',
+                fontPath: '../fonts/',
+            })
+        )
         .pipe(
             gulpIconfont({
-                fontName: 'gulp-static-font', // required
-                prependUnicode: true, // recommended option
-                formats: ['ttf', 'eot', 'woff'], // default, 'woff2' and 'svg' are available
-                timestamp: runTimestamp, // recommended to get consistent builds when watching files
+                fontName: 'iconfont', // required
+                formats: ['svg', 'ttf', 'eot', 'woff', 'woff2'],
+                timestamp: Math.round(Date.now() / 1000), // recommended to get consistent builds when watching files
             })
         )
         .on('glyphs', function (glyphs, options) {
@@ -131,17 +172,18 @@ function makeIconfont() {
             console.log(glyphs, options)
         })
         .pipe(gulp.dest('dist/fonts/'))
+        .pipe(reload({ stream: true }))
 }
+exports.svgFont = svgFont
 
-function clean () {
+function clean() {
     // 如果直接使用 'dist'，当dist目录不存在时，会出现一个bug
     return gulp.src(['dist/**/*.*', 'dist/**/*']).pipe(gulpClean({ force: true }))
 }
 exports.clean = clean
 
+// 并发执行 js，css
+exports.serve = gulp.series(gulp.parallel(copyStatic, js, css, svgFont), html, watchs)
 
 // 并发执行 js，css
-exports.serve = gulp.series(gulp.parallel(js, css), html, watchs)
-
-// 并发执行 js，css
-exports.build = gulp.series(clean, gulp.parallel(js, css), gulp.parallel(compressJs, cssnano), html)
+exports.build = gulp.series(clean, gulp.parallel(copyStatic, js, css, svgFont, makeExample), gulp.parallel(compressJs, cssnano), html)

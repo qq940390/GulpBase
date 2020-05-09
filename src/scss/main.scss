@@ -1,16 +1,26 @@
 @import '_variables.scss';
 
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.test {
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        display: inline-flex;
+        padding: 1rem;
+        background: $color;
+        box-shadow: 2px 2px $bg-color;
+        transform: rotate(20deg);
+    }
 }
-li {
-    display: inline-flex;
-    padding: 1rem;
-    background: $color;
-    box-shadow: 2px 2px $bg-color;
-    transform: rotate(20deg);
+
+.iconfonts{
+    margin-top: 4rem;
+    font-size:2rem;
+    .iconfont{
+        font-size: 2rem;
+    }
 }
 
 /* Testing autoprefixer */
@@ -20,7 +30,7 @@ li {
 
 /* Testing cssnext */
 .cssnext {
-    background: rgba(red, .3);
+    background: rgba(red, 0.3);
 }
 
 /* Testing precss */

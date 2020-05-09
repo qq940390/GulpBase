@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>icon font test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../css/iconfont.css" />
+    <style>
+        .screen-tip {
+            line-height: 150%;
+            font-size: 1.5rem;
+            color: #fff;
+            background: rgba(0, 0, 0, .6);
+            min-width: 6rem;
+            position: fixed;
+            padding: 10px 15px;
+            left: 50%;
+            top: 50%;
+            opacity: 0;
+            margin-left: -calc(100%/2)px;
+            margin-top: -calc(100%/2)px;
+            transition: all .5s;
+        }
+
+        .icon_lists {
+            width: 100% !important;
+        }
+
+        .icon_lists li {
+            display: inline-flex;
+            width: 120px;
+            height: 200px;
+            text-align: center;
+            list-style: none !important;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon_lists .iconfont {
+            width: 100%;
+            height: 120px;
+            display: block;
+            text-align: center;
+            font-size: 50px;
+            line-height: 100px;
+            color: #333;
+            -webkit-transition: font-size 0.25s ease-out 0s;
+            -moz-transition: font-size 0.25s ease-out 0s;
+            transition: font-size 0.25s ease-out 0s;
+        }
+
+        .fontclass {
+            height: 20px;
+            line-height: 20px;
+            overflow: hidden;
+            white-space: nowrap;
+            position: absolute;
+            left: 0;
+            bottom: 60px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .code {
+            height: 58px;
+            line-height: 1rem;
+            overflow: hidden;
+            word-break: break-all;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .icon_lists .iconfont:hover {
+            font-size: 100px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="screen-tip"></div>
+    <h2>图标字体</h2>
+    <ul class="icon_lists clear">
+        <% _.each(icons, function(icon) { %>
+        <li>
+            <i class="iconfont icon-<%= icon %>"></i>
+            <input class="fontclass" value="icon-<%= icon%>" />
+            <textarea class="code"><i class="iconfont icon-<%= icon %>"></i></textarea>
+        </li>
+        <% }); %>
+    </ul>
+    <div style="clear: both;">
+        <h2>使用方法：</h2>
+        <pre>&lt;i class=&quot;iconfont icon-name&quot;&gt;&lt;/i&gt;</pre>
+        <h3>例如：</h3>
+        <pre>&lt;i class=&quot;iconfont icon-eye&quot;&gt;&lt;/i&gt;</pre>
+        <pre>&lt;i class=&quot;iconfont icon-search&quot;&gt;&lt;/i&gt;</pre>
+        <pre>&lt;i class=&quot;iconfont icon-setting&quot;&gt;&lt;/i&gt;</pre>
+    </div>
+
+    <script>
+        function showTip(str) {
+            var obj = document.querySelector('.screen-tip')
+            obj.innerHTML = str
+            obj.style.opacity = 1
+            setTimeout(() => {
+                obj.style.opacity = 0
+            }, 1000)
+        }
+
+        document.querySelectorAll('.fontclass').forEach(function (item) {
+            item.addEventListener('click', function (e) {
+                e.target.select(); // 选择文本
+                document.execCommand("Copy");
+                showTip('复制成功！')
+            })
+        })
+
+        document.querySelectorAll('.code').forEach(function (item) {
+            item.addEventListener('click', function (e) {
+                e.target.select(); // 选择文本
+                document.execCommand("Copy");
+                showTip('复制成功！')
+            })
+        })
+
+    </script>
+</body>
+
+</html>
