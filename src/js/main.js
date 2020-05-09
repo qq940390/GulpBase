@@ -1,6 +1,13 @@
 class test {
     constructor() {
-        alert(this.getBrowserInfo())
+        let info = this.getBrowserInfo()
+        var div = document.createElement('div')
+        div.innerHTML = '你看到我了吗？ ' + info + '——' + (new Date).toLocaleTimeString()
+        div.style.fontSize = '36px'
+        div.style.backgroundColor = '#fff'
+        div.style.margin = '5px'
+        div.style.padding = '15px'
+        document.body.insertBefore(div, document.body.nextSibling)
     }
 
     getBrowserInfo () {
