@@ -1,51 +1,55 @@
-const { src, dest, parallel, series, watch } = require('gulp')
-const inject = require('gulp-inject')
-const sass = require('gulp-sass')
-const babel = require('gulp-babel')
-const uglify = require('gulp-uglify')
-const autoprefixer = require('gulp-autoprefixer')
-const sourcemaps = require('gulp-sourcemaps')
+const gulp = require('gulp')
+const gulpInject = require('gulp-inject')
+const gulpSass = require('gulp-sass')
+const gulpBabel = require('gulp-babel')
+const gulpUglify = require('gulp-uglify')
+const gulpAutoprefixer = require('gulp-autoprefixer')
+const gulpRename = require('gulp-rename')
+const gulpClean = require('gulp-clean')
+const gulpSourcemaps = require('gulp-sourcemaps')
 const browserSync = require('browser-sync').create()
 const reload = browserSync.reload
-const iconfont = require('gulp-iconfont')
+const gulpIconfont = require('gulp-iconfont')
 const runTimestamp = Math.round(Date.now() / 1000)
-const pipeline = require('readable-stream').pipeline
 
-sass.compiler = require('node-sass')
+gulpSass.compiler = require('node-sass')
 
 function css() {
-    return src(['src/scss/**/*.scss', '!src/scss/variables.scss'])
-        .pipe(sourcemaps.init())
+    return gulp
+        .src(['src/scss/**/*.scss', '!src/scss/variables.scss'])
+        .pipe(gulpSourcemaps.init())
         .pipe(
-            sass
+            gulpSass
                 .sync({
                     outputStyle: 'expanded',
                 })
-                .on('error', sass.logError)
+                .on('error', gulpSass.logError)
         )
-        .pipe(sourcemaps.write('./'))
-        .pipe(dest('dist/css'))
+        .pipe(gulpSourcemaps.write('./'))
+        .pipe(gulp.dest('dist/css'))
         .pipe(reload({ stream: true }))
 }
 exports.css = css
 
 function js() {
-    return src(['src/js/**/*.js'])
+    return gulp
+        .src(['src/js/**/*.js'])
         .pipe(
-            babel({
+            gulpBabel({
                 presets: ['@babel/preset-env'],
             })
         )
-        .pipe(dest('dist/js'))
+        .pipe(gulp.dest('dist/js'))
         .pipe(reload({ stream: true }))
 }
 exports.js = js
 
 function html() {
-    return src('src/index.html')
+    return gulp
+        .src('src/index.html')
         .pipe(
-            inject(
-                src('dist/**/*.js', {
+            gulpInject(
+                gulp.src(['dist/**/*.js', '!dist/**/*.min.js', 'dist/**/reset.css', 'dist/**/*!(reset).css', '!dist/**/*.min.css'], {
                     read: false,
                 }),
                 {
@@ -54,7 +58,7 @@ function html() {
                 }
             )
         )
-        .pipe(dest('dist'))
+        .pipe(gulp.dest('dist'))
         .pipe(reload({ stream: true }))
 }
 exports.html = html
@@ -73,9 +77,10 @@ const watchs = () => {
 exports.watchs = watchs
 
 function makeIconfont() {
-    return src(['static/svg/*.svg'])
+    return gulp
+        .src(['src/svg/*.svg'])
         .pipe(
-            iconfont({
+            gulpIconfont({
                 fontName: 'gulp-static-font', // required
                 prependUnicode: true, // recommended option
                 formats: ['ttf', 'eot', 'woff'], // default, 'woff2' and 'svg' are available
@@ -86,11 +91,28 @@ function makeIconfont() {
             // CSS templating, e.g.
             console.log(glyphs, options)
         })
-        .pipe(dest('dist/static/fonts/'))
+        .pipe(gulp.dest('dist/fonts/'))
 }
+
+function clean() {
+    return gulp.src('dist').pipe(gulpClean())
+}
+exports.clean = clean
 
 function compress() {
-    return pipeline(src('lib/*.js'), uglify(), dest('dist'))
+    return gulp
+        .src(['dist/**/*.js', '!dist/**/*.min.js'])
+        .pipe(
+            gulpRename({
+                suffix: '.min',
+                extname: '.js',
+            })
+        )
+        .pipe(gulpUglify())
+        .pipe(gulp.dest('dist'))
 }
+exports.compress = compress
 
-exports.serve = series(js, css, html, watchs)
+exports.serve = gulp.series(js, css, html, watchs)
+
+exports.build = gulp.series(clean, js, compress, css, html)
