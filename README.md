@@ -2,15 +2,14 @@
 
 一个基于 Windows NodeJs 环境，利用 Gulp 打包构建常规CSS、JS项目的基本应用。
 
-- CSS支持SASS，支持 autoprefixer 自动添加前缀
+- CSS支持SCSS，支持 postcss 自动添加兼容性前缀
 - JS支持Babel自动转换
 - 支持JS压缩，CSS压缩
 - 支持生成 SourceMap
+- 支持svg图标生成图标字体
+- 支持静态文件自动复制
 - Build 自动清理dist文件夹
-- 支持本地调试
-
-其中用到了SASS，所以需要安装Ruby和SASS，安装方法参考sass官网：
-[https://www.sass.hk/install/](https://www.sass.hk/install/)
+- 支持本地调试，热重载
 
 使用方法：
 
@@ -20,4 +19,8 @@
 
 配置文件是 gulpfile.js ，可根据自己需要进行更改
 
-本地调试和Build不可同时运行，当然，你也可以同时运行，然后...
+本地调试打开的页面是：
+http://localhost:3000/
+
+图标字体样例页面是：
+http://localhost:3000/fonts/

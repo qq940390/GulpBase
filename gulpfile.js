@@ -120,7 +120,6 @@ const watchs = () => {
     gulp.watch('src/index.html', html)
     gulp.watch('src/icons/svg/*.svg', svgFont)
     gulp.watch('src/icons/example/index.html', makeExample)
-    //gulp.watch(['src/images/*.*', 'src/images/*/*.*'], images)
     browserSync.init({
         server: {
             baseDir: 'dist/',
