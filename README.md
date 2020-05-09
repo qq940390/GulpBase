@@ -14,7 +14,7 @@
 使用方法：
 
 - 安装： npm install
-- 启动本地调试： npm run server ，可以运行 _run_server.bat 快速启动调试
+- 启动本地调试： npm run serve ，可以运行 _run_serve.bat 快速启动调试
 - Build： npm run build ，可以运行 _run_build.bat 快速 Build
 
 配置文件是 gulpfile.js ，可根据自己需要进行更改

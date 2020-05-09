@@ -5,7 +5,7 @@
     "scripts": {
         "clean": "rimraf node_modules",
         "build": "gulp build",
-        "server": "gulp serve"
+        "serve": "gulp serve"
     },
     "repository": {
         "type": "git",
