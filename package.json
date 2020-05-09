@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "description": "GulpBase",
     "scripts": {
-        "clean-modules": "rimraf node_modules",
-        "build": "gulp",
-        "server": "gulp browser"
+        "clean": "rimraf node_modules",
+        "build": "gulp build",
+        "server": "gulp serve"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/qq940390/GruntBase.git"
+        "url": "git+https://github.com/qq940390/GulpBase.git"
     },
     "keywords": [
         "GulpBase"
@@ -17,15 +17,15 @@
     "author": "wujinhai",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/qq940390/GruntBase/issues"
+        "url": "https://github.com/qq940390/GulpBase/issues"
     },
-    "homepage": "https://github.com/qq940390/GruntBase#readme",
+    "homepage": "https://github.com/qq940390/GulpBase#readme",
     "devDependencies": {
         "@babel/core": "^7.9.6",
         "@babel/preset-env": "^7.9.6",
         "browser-sync": "^2.26.7",
+        "cssnano": "^4.1.10",
         "gulp": "^4.0.2",
-        "gulp-autoprefixer": "^7.0.1",
         "gulp-babel": "^8.0.0",
         "gulp-clean": "^0.4.0",
         "gulp-connect": "^5.7.0",
@@ -38,8 +38,25 @@
         "gulp-sourcemaps": "^2.6.5",
         "gulp-uglify": "^3.0.2",
         "node-sass": "^4.14.1",
+        "postcss": "^7.0.29",
+        "postcss-cssnext": "^3.1.0",
+        "postcss-import": "^12.0.1",
         "postcss-px-to-viewport": "^1.1.1",
-        "postcss-pxtorem": "^5.1.1"
+        "postcss-pxtorem": "^5.1.1",
+        "postcss-url": "^8.0.0",
+        "precss": "^4.0.0"
     },
-    "dependencies": {}
+    "dependencies": {},
+    "browserslist": [
+        "last 5 versions",
+        "> 1%",
+        "Firefox ESR",
+        "Opera 12.1",
+        "iOS 7",
+        "last 3 iOS versions",
+        "ie 8",
+        "ie 9",
+        "ie 10",
+        "ie 11"
+    ]
 }

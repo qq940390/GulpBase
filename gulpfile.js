@@ -1,9 +1,9 @@
 const gulp = require('gulp')
 const gulpInject = require('gulp-inject')
 const gulpSass = require('gulp-sass')
+const gulpPostcss = require('gulp-postcss')
 const gulpBabel = require('gulp-babel')
 const gulpUglify = require('gulp-uglify')
-const gulpAutoprefixer = require('gulp-autoprefixer')
 const gulpRename = require('gulp-rename')
 const gulpClean = require('gulp-clean')
 const gulpSourcemaps = require('gulp-sourcemaps')
@@ -16,7 +16,7 @@ gulpSass.compiler = require('node-sass')
 
 function css() {
     return gulp
-        .src(['src/scss/**/*.scss', '!src/scss/variables.scss'])
+        .src(['src/scss/**/*.scss', '!src/scss/_variables.scss'])
         .pipe(gulpSourcemaps.init())
         .pipe(
             gulpSass
@@ -24,6 +24,16 @@ function css() {
                     outputStyle: 'expanded',
                 })
                 .on('error', gulpSass.logError)
+        )
+        .pipe(
+            gulpPostcss([
+                require('precss'),
+                require('postcss-import'),
+                require('postcss-url'),
+                require('postcss-cssnext'),
+                require('postcss-px-to-viewport'),
+                require('postcss-pxtorem'),
+            ])
         )
         .pipe(gulpSourcemaps.write('./'))
         .pipe(gulp.dest('dist/css'))
@@ -94,8 +104,9 @@ function makeIconfont() {
         .pipe(gulp.dest('dist/fonts/'))
 }
 
-function clean() {
-    return gulp.src('dist').pipe(gulpClean())
+function clean () {
+    // 如果直接使用 'dist'，当dist目录不存在时，会出现一个bug
+    return gulp.src(['dist/**/*.*', 'dist/**/*']).pipe(gulpClean({ force: true }))
 }
 exports.clean = clean
 
@@ -113,6 +124,8 @@ function compress() {
 }
 exports.compress = compress
 
-exports.serve = gulp.series(js, css, html, watchs)
+// 并发执行 js，css
+exports.serve = gulp.series(gulp.parallel(js, css), html, watchs)
 
-exports.build = gulp.series(clean, js, compress, css, html)
+// 并发执行 js，css
+exports.build = gulp.series(clean, gulp.parallel(js, css), compress, html)

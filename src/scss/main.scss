@@ -1,4 +1,4 @@
-@import 'variables.scss';
+@import '_variables.scss';
 
 ul {
     list-style: none;
@@ -10,5 +10,24 @@ li {
     padding: 1rem;
     background: $color;
     box-shadow: 2px 2px $bg-color;
-    transform:rotate(20deg);
+    transform: rotate(20deg);
+}
+
+/* Testing autoprefixer */
+.autoprefixer {
+    display: flex;
+}
+
+/* Testing cssnext */
+.cssnext {
+    background: rgba(red, .3);
+}
+
+/* Testing precss */
+.precss {
+    @if 3 < 5 {
+        background: green;
+    } @else {
+        background: blue;
+    }
 }
