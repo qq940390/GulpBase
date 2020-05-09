@@ -62,11 +62,13 @@ exports.cssnano = cssnano
 function js() {
     return gulp
         .src(['src/js/**/*.js'])
+        .pipe(gulpSourcemaps.init())
         .pipe(
             gulpBabel({
                 presets: ['@babel/preset-env'],
             })
         )
+        .pipe(gulpSourcemaps.write('./'))
         .pipe(gulp.dest('dist/js'))
         .pipe(reload({ stream: true }))
 }
