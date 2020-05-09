@@ -18,9 +18,3 @@
 - Build： npm run build ，可以运行 _run_build.bat 快速 Build
 
 配置文件是 gulpfile.js ，可根据自己需要进行更改
-
-本地调试打开的页面是：
-http://localhost:3000/
-
-图标字体样例页面是：
-http://localhost:3000/fonts/
